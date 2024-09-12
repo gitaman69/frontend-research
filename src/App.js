@@ -109,11 +109,11 @@ function App() {
             }}
           />
           <div>
-            <h2>Matching Values:</h2>
+            <h2>Threat Time:</h2>
             <ul>
               {matchingIndices.map(index => (
                 <li key={index}>
-                  Row Index: {index}, Value: {chartData[index].value}
+                  Time: {index}, Energy Consumption: {chartData[index].value}
                 </li>
               ))}
             </ul>
