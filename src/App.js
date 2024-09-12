@@ -65,7 +65,7 @@ function App() {
           zIndex: 1,
         },
         {
-          label: 'Matching Values',
+          label: 'Potential Threat Points',
           data: chartData.map((point, idx) =>
             matchingIndices.includes(idx) ? point.value : null
           ),
