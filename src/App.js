@@ -24,36 +24,46 @@ ChartJS.register(
 );
 
 function App() {
-  const [file, setFile] = useState(null);
-  const [chartData, setChartData] = useState(null);
-  const [matchingIndices, setMatchingIndices] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [chartsData, setChartsData] = useState([]);
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    setFiles([...e.target.files]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('file', file);
+    
+    // Iterate through selected files and upload each
+    const chartDataPromises = Array.from(files).map(async (file) => {
+      const fileFormData = new FormData();
+      fileFormData.append('file', file);
 
-    try {
-      const response = await axios.post('https://backend-research.vercel.app/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data' 
-        }
-      });
+      try {
+        const response = await axios.post('https://backend-research.vercel.app/upload', fileFormData, {
+          headers: {
+            'Content-Type': 'multipart/form-data' 
+          }
+        });
 
-      setChartData(response.data.chartData);
-      setMatchingIndices(response.data.matchingIndices);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-    }
+        return {
+          fileName: file.name,
+          chartData: response.data.chartData,
+          matchingIndices: response.data.matchingIndices,
+        };
+      } catch (error) {
+        console.error(`Error uploading file ${file.name}:`, error);
+        return null;
+      }
+    });
+
+    // Wait for all file uploads to complete
+    const results = await Promise.all(chartDataPromises);
+    setChartsData(results.filter(result => result !== null));
   };
 
-  const formatChartData = () => {
-    if (!chartData) return {};
-
+  const formatChartData = (chartData, matchingIndices) => {
     return {
       labels: chartData.map((point) => point.index),
       datasets: [
@@ -81,45 +91,48 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Upload CSV and Display Graph</h1>
+      <h1>Upload CSV and Display Graphs</h1>
       <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} />
+        <input type="file" multiple onChange={handleFileChange} />
         <button type="submit">Upload and Plot</button>
       </form>
 
-      {chartData && (
-        <div>
-          <Line
-            data={formatChartData()}
-            options={{
-              scales: {
-                x: {
-                  title: {
-                    display: true,
-                    text: 'Row Index',
+      <div className="charts-container">
+        {chartsData.map((data, index) => (
+          <div key={index} className="chart-card">
+            <h2>{data.fileName}</h2>
+            <Line
+              data={formatChartData(data.chartData, data.matchingIndices)}
+              options={{
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: 'Row Index',
+                    },
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: 'Values',
+                    },
                   },
                 },
-                y: {
-                  title: {
-                    display: true,
-                    text: 'Values',
-                  },
-                },
-              },
-            }}
-          />
-          <div>
-            <h2>Threat Time:</h2>
-            <ul>
-              {matchingIndices.map(index => (
-                <li key={index}>
-                  Time: {index}, Energy Consumption: {chartData[index].value}
-                </li>
-              ))}
-            </ul>
+              }}
+            />
+            <div>
+              <h3>Threat Time:</h3>
+              <ul>
+                {data.matchingIndices.map(idx => (
+                  <li key={idx}>
+                    Time: {idx}, Energy Consumption: {data.chartData[idx].value}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
