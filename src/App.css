@@ -1,38 +1,118 @@
+/* App.css */
+
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  color: #fdfdfd; /* Default text color */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Container for the entire app */
 .App {
   text-align: center;
+  padding: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Header styles */
+h1 {
+  color: #fdfdfd;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Form styles */
+form {
+  margin-bottom: 30px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+input[type="file"] {
+  padding: 12px;
+  border: 2px solid #444;
+  border-radius: 8px;
+  background-color: #333;
+  color: #fdfdfd;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input[type="file"]:hover {
+  border-color: #007bff;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: #fdfdfd;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05); /* Slightly increase button size on hover */
+}
+
+/* Container for charts */
+.charts-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: column; /* Arrange charts vertically */
+  align-items: center; /* Center charts horizontally */
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  min-height: 100vh; /* Ensure container takes up at least full viewport height */
+  width: 100vw; /* Ensure container takes up full viewport width */
+  background: transparent; /* Transparent background for charts */
+  padding: 0; /* Remove padding to ensure full-screen usage */
 }
 
-.App-link {
-  color: #61dafb;
+/* Individual chart card styles */
+.chart-card {
+  background-color: rgba(255, 255, 255, 0.1); /* More transparent background */
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  max-width: 100%; /* Allow chart card to be wide but not exceed viewport width */
+  width: 100%;
+  margin: 20px 0; /* Add margin for spacing between charts */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Chart title styles */
+.chart-card h2 {
+  color: #00c6ff; /* Bright blue color for titles */
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Threat Time list styles */
+h3 {
+  color: #fdfdfd;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  background-color: rgba(255, 255, 255, 0.2); /* Lighter background for items */
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+li:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px); /* Slightly lift the list item on hover */
 }
