@@ -52,6 +52,7 @@ function App() {
           fileName: file.name,
           chartData: response.data.chartData,
           matchingIndices: response.data.matchingIndices,
+          matchingValues: response.data.matchingValues,
         };
       } catch (error) {
         console.error(`Error uploading file ${file.name}:`, error);
@@ -194,6 +195,14 @@ function App() {
                 },
               }}
             />
+            <h3>Consecutive Matching Values:</h3>
+            <ul>
+              {data.matchingIndices.map((idx, i) => (
+                <li key={i}>
+                  Index: {idx}, Value: {data.matchingValues[i]}
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
 
@@ -219,6 +228,14 @@ function App() {
                 },
               }}
             />
+            <h3>Anomalies Detected:</h3>
+            <ul>
+              {anomalyData.anomalyIndices.map((idx, i) => (
+                <li key={i}>
+                  Index: {idx}, Value: {anomalyData.anomalies[i]}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
