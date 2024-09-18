@@ -42,7 +42,7 @@ function App() {
       fileFormData.append('file', file);
 
       try {
-        const response = await axios.post('http://127.0.0.1:5000/upload', fileFormData, {
+        const response = await axios.post('https://backend-research.vercel.app/upload', fileFormData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -73,7 +73,7 @@ function App() {
       formData.append('file', file);
 
       try {
-        const response = await axios.post('http://127.0.0.1:5000/detect_anomalies', formData, {
+        const response = await axios.post('https://backend-research.vercel.app/detect_anomalies', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
