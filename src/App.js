@@ -1,5 +1,7 @@
+// App.js
 import './App.css';
-import React, { useState } from 'react';
+import './SmartMeter.css'; // Import SmartMeter CSS
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Chart as ChartJS,
@@ -9,11 +11,11 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import SmartMeter from './SmartMeter'; // Import the SmartMeter component
 
-// Register the components and scales
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,6 +30,10 @@ function App() {
   const [files, setFiles] = useState([]);
   const [chartsData, setChartsData] = useState([]);
   const [anomalyData, setAnomalyData] = useState(null);
+  const [plottingData, setPlottingData] = useState(null); 
+  const [currentValue, setCurrentValue] = useState(null); // State to hold the current value for the smart meter
+  const [currentTime, setCurrentTime] = useState(null); // State to hold the current time
+  const [startAnimation, setStartAnimation] = useState(false); 
 
   const handleFileChange = (e) => {
     setFiles([...e.target.files]);
@@ -35,8 +41,6 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    
     const chartDataPromises = Array.from(files).map(async (file) => {
       const fileFormData = new FormData();
       fileFormData.append('file', file);
@@ -44,8 +48,8 @@ function App() {
       try {
         const response = await axios.post('https://backend-research.vercel.app/upload', fileFormData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+          },
         });
 
         return {
@@ -61,22 +65,23 @@ function App() {
     });
 
     const results = await Promise.all(chartDataPromises);
-    setChartsData(results.filter(result => result !== null));
+    setChartsData(results.filter((result) => result !== null));
+    setStartAnimation(true); 
   };
 
   const handleAnomalyDetection = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    
+
     if (files.length > 0) {
-      const file = files[0]; // Use the first selected file for anomaly detection
+      const file = files[0]; 
       formData.append('file', file);
 
       try {
         const response = await axios.post('https://backend-research.vercel.app/detect_anomalies', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+          },
         });
 
         setAnomalyData({
@@ -92,31 +97,63 @@ function App() {
     }
   };
 
-  const formatChartData = (chartData, matchingIndices) => {
-    return {
-      labels: chartData.map((point) => point.index),
+  const startPlottingAnimation = (chartData, matchingIndices) => {
+    let currentIndex = 0;
+    const totalPoints = chartData.length;
+
+    const plotData = {
+      labels: [],
       datasets: [
         {
           label: 'Values',
-          data: chartData.map((point) => point.value),
+          data: [],
           borderColor: 'blue',
           fill: false,
-          zIndex: 1,
         },
         {
           label: 'Consecutive Matching Values',
-          data: chartData.map((point, idx) => {
-            return matchingIndices.includes(idx) ? point.value : null;
-          }),
+          data: [],
           borderColor: 'red',
           pointBackgroundColor: 'red',
           pointRadius: 5,
           fill: false,
-          zIndex: 2,
         },
       ],
     };
+
+    setPlottingData(plotData); 
+
+    const interval = setInterval(() => {
+      if (currentIndex < totalPoints) {
+        const currentPoint = chartData[currentIndex];
+        plotData.labels.push(currentPoint.index);
+        plotData.datasets[0].data.push(currentPoint.value);
+
+        // For matching values
+        if (matchingIndices.includes(currentIndex)) {
+          plotData.datasets[1].data.push(currentPoint.value);
+        } else {
+          plotData.datasets[1].data.push(null);
+        }
+
+        setCurrentValue(currentPoint.value); // Update the current value for the smart meter
+        setCurrentTime(currentPoint.index); // Update the current time for the smart meter
+        setPlottingData({ ...plotData });
+        currentIndex++;
+      } else {
+        clearInterval(interval); 
+      }
+    }, 100); // Plot one point every 100ms for smooth animation
   };
+
+  useEffect(() => {
+    if (startAnimation && chartsData.length > 0) {
+      chartsData.forEach((data) => {
+        startPlottingAnimation(data.chartData, data.matchingIndices);
+      });
+      setStartAnimation(false);
+    }
+  }, [startAnimation, chartsData]);
 
   const formatAnomalyChartData = (allValues, anomalies, thresholds) => {
     return {
@@ -127,18 +164,14 @@ function App() {
           data: allValues,
           borderColor: 'blue',
           fill: false,
-          zIndex: 1,
         },
         {
           label: 'Anomalies',
-          data: allValues.map((value, idx) => {
-            return anomalies.includes(value) ? value : null;
-          }),
+          data: allValues.map((value, idx) => (anomalies.includes(value) ? value : null)),
           borderColor: 'red',
           pointBackgroundColor: 'red',
           pointRadius: 5,
           fill: false,
-          zIndex: 2,
         },
         {
           label: 'Upper Threshold',
@@ -146,7 +179,6 @@ function App() {
           borderColor: 'orange',
           borderDash: [5, 5],
           fill: false,
-          zIndex: 0,
         },
         {
           label: 'Lower Threshold',
@@ -154,7 +186,6 @@ function App() {
           borderColor: 'orange',
           borderDash: [5, 5],
           fill: false,
-          zIndex: 0,
         },
       ],
     };
@@ -176,25 +207,33 @@ function App() {
         {chartsData.map((data, index) => (
           <div key={index} className="chart-card">
             <h2>{data.fileName}</h2>
-            <Line
-              data={formatChartData(data.chartData, data.matchingIndices)}
-              options={{
-                scales: {
-                  x: {
-                    title: {
-                      display: true,
-                      text: 'Row Index',
-                    },
-                  },
-                  y: {
-                    title: {
-                      display: true,
-                      text: 'Values',
-                    },
-                  },
-                },
-              }}
-            />
+            <div className="chart-and-meter">
+              <div className="chart">
+                {plottingData && (
+                  <Line
+                    data={plottingData}
+                    options={{
+                      scales: {
+                        x: {
+                          title: {
+                            display: true,
+                            text: 'Row Index',
+                          },
+                        },
+                        y: {
+                          title: {
+                            display: true,
+                            text: 'Values',
+                          },
+                        },
+                      },
+                      animation: false,
+                    }}
+                  />
+                )}
+              </div>
+              <SmartMeter value={currentValue} time={currentTime} /> {/* Pass current value and time to SmartMeter */}
+            </div>
             <h3>Consecutive Matching Values:</h3>
             <ul>
               {data.matchingIndices.map((idx, i) => (
@@ -226,6 +265,7 @@ function App() {
                     },
                   },
                 },
+                animation: false,
               }}
             />
             <h3>Anomalies Detected:</h3>

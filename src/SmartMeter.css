@@ -1,0 +1,30 @@
+/* SmartMeter.css */
+.smart-meter {
+    width: 400px; /* Decreased width */
+    height: 250px; /* Decreased height */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 5px; /* Reduced padding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9; /* Light background color */
+}
+
+.meter-display {
+    font-size: 20px; /* Slightly decrease font size */
+    font-weight: bold; /* Make it bold */
+    color: #000; /* Set text color to black */
+}
+
+.smart-meter h3 {
+    color: #000; /* Change the title color to black */
+    margin: 0; /* Remove margin to reduce space */
+}
+
+.time-display {
+    font-size: 18px; /* Adjust font size for the time display */
+    color: #333; /* Darker text color for better readability */
+    margin-top: 10px; /* Add some space above the time display */
+}

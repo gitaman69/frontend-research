@@ -82,6 +82,27 @@ button:hover {
   margin: 20px 0; /* Add margin for spacing between charts */
 }
 
+/* New layout for chart and smart meter */
+.chart-and-meter {
+  display: flex; /* Use flexbox to align chart and smart meter */
+  justify-content: space-between; /* Space between chart and smart meter */
+  align-items: flex-start; /* Align items at the start */
+  width: 100%; /* Full width for this container */
+  padding: 0; /* Remove padding to ensure full-screen usage */
+}
+
+/* Chart styles */
+.chart {
+  flex: 1; /* Allow chart to take remaining space */
+  max-width: 70%; /* Set max-width to leave space for smart meter */
+  margin-right: 5px; /* Reduced space between chart and smart meter */
+}
+
+/* Smart meter styles */
+.smart-meter {
+  max-width: 30%; /* Smart meter will take up 30% of the width */
+}
+
 /* Chart title styles */
 .chart-card h2 {
   color: #00c6ff; /* Bright blue color for titles */
