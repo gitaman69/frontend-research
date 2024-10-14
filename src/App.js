@@ -35,6 +35,20 @@ function App() {
   const [currentTime, setCurrentTime] = useState(null); // State to hold the current time
   const [startAnimation, setStartAnimation] = useState(false); 
 
+  const [meterState, setMeterState] = useState('off');
+
+    const toggleMeter = async () => {
+        const newState = meterState === 'off' ? 'on' : 'off';
+        try {
+            const response = await axios.post('https://backend-research.vercel.app/toggle_meter', {
+                state: newState,
+            });
+            setMeterState(response.data.meter_state);
+        } catch (error) {
+            console.error('Error toggling meter:', error);
+        }
+    };
+
   const handleFileChange = (e) => {
     setFiles([...e.target.files]);
   };
@@ -202,6 +216,12 @@ function App() {
       <form onSubmit={handleAnomalyDetection}>
         <button type="submit">Detect Anomalies</button>
       </form>
+
+      <h2>Laptop Meter Control</h2>
+      <div id="status">Meter is {meterState.toUpperCase()}</div>
+      <button onClick={toggleMeter}>
+          Turn {meterState === 'off' ? 'ON' : 'OFF'}
+      </button>
 
       <div className="charts-container">
         {chartsData.map((data, index) => (

@@ -1,30 +1,48 @@
-/* SmartMeter.css */
 .smart-meter {
-    width: 400px; /* Decreased width */
-    height: 250px; /* Decreased height */
-    border: 1px solid #ccc;
+    width: 400px;
+    height: 250px;
+    border: 2px solid #191970; /* Midnight Blue border */
     border-radius: 8px;
-    padding: 5px; /* Reduced padding */
+    padding: 10px 20px 10px 10px; /* Added more padding on the right */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #f9f9f9; /* Light background color */
+    background-color: #b3d6ec; /* Mint Green background */
+    box-sizing: border-box; /* Ensure padding is included in width */
+
+    h3{
+        text-align: center;
+        margin-left: 25%;
+    }
+}
+.meter-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000; /* White for general text */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Fill available space */
 }
 
-.meter-display {
-    font-size: 20px; /* Slightly decrease font size */
-    font-weight: bold; /* Make it bold */
-    color: #000; /* Set text color to black */
+.power-consumption-value {
+    background-color: #28a745; /* Green background for value only (unchanged) */
+    padding: 5px;
+    border-radius: 5px;
+    color: white; /* Ensure value is readable on green background */
 }
 
 .smart-meter h3 {
-    color: #000; /* Change the title color to black */
-    margin: 0; /* Remove margin to reduce space */
+    color: #000000; /* Bright Yellow for headings */
+    margin-bottom: 10px;
+    align-self: flex-start;
 }
 
 .time-display {
-    font-size: 18px; /* Adjust font size for the time display */
-    color: #333; /* Darker text color for better readability */
-    margin-top: 10px; /* Add some space above the time display */
+    font-size: 18px;
+    color: #CD5C5C; /* Indian Red for time display */
+    margin-top: 10px;
 }

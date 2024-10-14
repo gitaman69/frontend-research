@@ -7,7 +7,8 @@ const SmartMeter = ({ value, time }) => {
     <div className="smart-meter">
       <h3>Smart Meter</h3>
       <div className="meter-display">
-        <span className="meter-value">Power Consumption = {value} KWH</span>
+        <span>Power Consumption = </span>
+        <span className="power-consumption-value">{value} KWH</span> {/* Power consumption value */}
         <br />
         <span className="time-display">Time = {time} hour</span> {/* Time display */}
       </div>
